@@ -1,0 +1,35 @@
+<style>
+
+
+#body {
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	position: absolute;
+	}
+
+
+#header {
+	height: auto;
+	width: 100%;
+	text-align: center;
+	position: relative;
+	color: #444;
+	font-size: 18px;
+}
+
+#canvas {
+position: absolute;
+height:100%; 
+width:100%;
+opacity: 1;
+background-color: argb(200,200,200,100);
+}
+
+#mode {
+position: relative;
+background-color: #aaa;
+}
+
+</style>
