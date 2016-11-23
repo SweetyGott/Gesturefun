@@ -1,12 +1,12 @@
-var cats = {};
-
+var drawingApp = {};
 var curScaling = 1;
 
 Leap.loop(function (frame) {
 
-    frame.hands.forEach(function (hand, index) {
+    var drawingApp = ( drawingApp || new DrawingApp());
 
-        var cat = ( cats[index] || (cats[index] = new Cat()) );
+
+    frame.hands.forEach(function (hand, index) {
 
         if (brushSizeGestureRecognized(hand)) {
             document.getElementById('bla').textContent = "Brush size gesture recognized!";
@@ -14,16 +14,45 @@ Leap.loop(function (frame) {
         } else {
             document.getElementById('bla').textContent = ""
         }
-        cat.setTransform(hand.screenPosition(), hand.roll(), curScaling);
-
+        drawingApp.transformRectangle(hand.screenPosition(), hand.roll(), curScaling);
     });
 
 }).use('screenPosition', {scale: 0.25});
 
-function convertRange(value, from, to) {
-    return ( value - from[0] ) * ( to[1] - to[0] ) / ( from[1] - from[0] ) + to[0];
+function convertRange(value, fromRange, toRange) {
+    return ( value - fromRange[0] ) * ( toRange[1] - toRange[0] ) / ( fromRange[1] - fromRange[0] ) + toRange[0];
 }
 
+var DrawingApp = function () {
+
+    var drawingApp = this;
+
+    var canvas = this.__canvas = new fabric.Canvas('c');
+
+    var rect = new fabric.Rect({
+        left: 150,
+        top: 200,
+        originX: 'left',
+        originY: 'top',
+        width: 150,
+        height: 120,
+        angle: -10,
+        fill: 'rgba(255,0,0,0.5)',
+        transparentCorners: false
+    });
+
+    canvas.add(rect).setActiveObject(rect);
+
+    drawingApp.transformRectangle = function (position, rotation, scaling) {
+        rect.left = position[0];
+        rect.top = position[2];
+        rect.angle = rotation;
+        rect.scale(scaling);
+        canvas.renderAll();
+    }
+
+
+};
 
 function brushSizeGestureRecognized(hand) {
 
@@ -36,43 +65,9 @@ function brushSizeGestureRecognized(hand) {
     var pinkyDirection = hand.pinky.direction;
 
     var approxEqualLocation = function (a, b) {
-        console.log(math.distance(a,b));
         return math.distance(a,b) < 90;
     };
 
     return approxEqualLocation(thumbPosition, pinkyPosition) &&
         pinkyDirection[1] < -0.5;
 }
-
-var Cat = function () {
-    var cat = this;
-    var img = document.createElement('img');
-    img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/109794/cat_2.png';
-    img.style.position = 'absolute';
-    img.onload = function () {
-        cat.setTransform([window.innerWidth / 2, window.innerHeight / 2], 0);
-        document.body.appendChild(img);
-    };
-
-    cat.setTransform = function (position, rotation, scaling) {
-
-        var left = position[0] - img.width / 2 + "px";
-        var top = position[2] + img.height + "px";
-
-
-        img.style.left = 0 + "px";
-        img.style.top = 0 + "px";
-
-        img.style.transform = 'translate(' + left + "," + top + ")";
-        img.style.transform += 'scale(' + scaling + ")";
-        img.style.transform += 'rotate(' + -rotation + 'rad)';
-
-        img.style.webkitTransform = img.style.MozTransform = img.style.msTransform =
-            img.style.OTransform = img.style.transform;
-
-    };
-
-
-};
-
-cats[0] = new Cat();
