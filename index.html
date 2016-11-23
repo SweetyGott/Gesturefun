@@ -2,25 +2,107 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Leap JS Example</title>
+    <title>Restful Gestures</title>
+
+    <!-- jquery -->
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <!-- mathjs -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/3.8.0/math.js"></script>
+
+    <!-- fabricjs -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.0/fabric.min.js"></script>
+
+
+    <!-- leap motion -->
+    <script src="./leap-0.6.4.min.js"></script>
+    <script src="//js.leapmotion.com/leap-plugins-0.1.12.js"></script>
+
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-style: groove;
+        }
+    </style>
 
 </head>
 <body>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/3.8.0/math.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.0/fabric.min.js"></script>
-<script src="./leap-0.6.4.min.js"></script>
-<script src="//js.leapmotion.com/leap-plugins-0.1.12.js"></script>
 
+<!-- app -->
 <script src="touchController.js"></script>
 <script src="app.js"></script>
 
-<canvas id="c" width="1500" height="800"></canvas>
 
-<table>
-    <th>Recognized gestures</th>
-    <tr><td id="toolbox">Toolbox</td></tr>
-    <tr><td id="brushSize">Brush Size</td></tr>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10" id="canvas-container">
+            <canvas id="c"></canvas>
+        </div>
 
-</table>
+        <div class="col-md-2 pull-right">
+            <table class="table table-bordered">
+                <tr>
+                    <th><strong>Current P Actions</strong></th>
+                </tr>
+                <tr>
+                    <td id="penTouch">penTouch</td>
+                </tr>
+                <tr>
+                    <td id="penHover">penHover</td>
+                </tr>
+                <tr>
+                    <td id="penButton">penButton</td>
+                </tr>
+                <tr>
+                    <td id="fingerTouch">fingerTouch</td>
+                </tr>
+            </table>
+
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>Gesture name</th>
+                    <th>NP</th>
+                    <th>P</th>
+                </tr>
+                <tr id="toolbox">
+                    <td class="DESC">Toolbox</td>
+                    <td class="NP"></td>
+                    <td class="P"></td>
+                </tr>
+                <tr id="brushSize">
+                    <td class="DESC">Brush Size</td>
+                    <td class="NP"></td>
+                    <td class="P"></td>
+                </tr>
+                <tr id="rotateCanvas">
+                    <td class="DESC">Rotate Canvas</td>
+                    <td class="NP"></td>
+                    <td class="P"></td>
+                </tr>
+                <tr id="pan">
+                    <td class="DESC">Pan</td>
+                    <td class="NP"></td>
+                    <td class="P"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

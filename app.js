@@ -2,6 +2,9 @@ function DrawingApp() {
 
     this.canvas = this.__canvas = new fabric.Canvas('c');
 
+    this.canvas.setWidth($('#canvas-container').get(0).offsetWidth - 50);
+    this.canvas.setHeight(900);
+
     this.rect = new fabric.Rect({
         left: 150,
         top: 200,
@@ -45,21 +48,21 @@ Leap.loop(function (frame) {
     frame.hands.forEach(function (hand, index) {
 
 
-        if (brushSizeGestureRecognized(hand)) {
+
+        if (brushSizeGestureRecognized(hand) && touchState.penButton) {
             drawingApp.scale(convertRange(hand.indexFinger.tipPosition[1],[0,700],[0.1,5]));
-            setDisplay('brushSize',true)
-        } else {
-            setDisplay('brushSize',false)
         }
+        setDisplay('brushSize',brushSizeGestureRecognized(hand),touchState.penButton);
 
-        if (openDrawingToolsGestureRecognized(hand)) {
-            setDisplay('toolbox',true)
-        } else {
-            setDisplay('toolbox',false)
+        setDisplay('toolbox',openDrawingToolsGestureRecognized(hand),true); // no p action needed TODO: implement effect
+
+        if (touchState.penHover || touchState.fingerTouch) {
+            drawingApp.move(hand.screenPosition());
+            drawingApp.rotate(hand.roll());
         }
+        setDisplay('rotateCanvas',true,touchState.penHover || touchState.fingerTouch); //TODO: rotate around finger/pen
+        setDisplay('pan',true,touchState.penHover || touchState.fingerTouch);
 
-        drawingApp.move(hand.screenPosition());
-        drawingApp.rotate(hand.roll());
         drawingApp.render();
 
     });
@@ -95,14 +98,19 @@ function openDrawingToolsGestureRecognized(hand) {
     return true;
 }
 
-function setDisplay(elementId,isActive) {
-    if (isActive) {
-        document.getElementById(elementId).style.backgroundColor = "#00FF00";
-    } else {
-        document.getElementById(elementId).style.backgroundColor = "#FFFFFF";
-    }
+function setDisplay(elementId,npIsActive,pIsActive) {
 
+    var gestureRow = document.getElementById(elementId);
+    var tagCell = gestureRow.getElementsByClassName("DESC")[0];
+    var npCell = gestureRow.getElementsByClassName("NP")[0];
+    var pCell = gestureRow.getElementsByClassName("P")[0];
+
+
+    npCell.style.backgroundColor = npIsActive ? "#00FF00" : "#FFFFFF";
+    pCell.style.backgroundColor = pIsActive ? "#00FF00" : "#FFFFFF";
+    tagCell.style.backgroundColor = npIsActive && pIsActive? "#00FF00" : "#FFFFFF";
 }
+
 function convertRange(value, fromRange, toRange) {
     return ( value - fromRange[0] ) * ( toRange[1] - toRange[0] ) / ( fromRange[1] - fromRange[0] ) + toRange[0];
 }
