@@ -1,15 +1,52 @@
-var drawingApp = {};
-var curScaling = 1;
+function DrawingApp() {
+
+    this.canvas = this.__canvas = new fabric.Canvas('c');
+
+    this.rect = new fabric.Rect({
+        left: 150,
+        top: 200,
+        originX: 'center',
+        originY: 'center',
+        width: 150,
+        height: 120,
+        fill: 'rgba(255,0,0,0.5)',
+        transparentCorners: false
+    });
+
+    this.canvas.add(this.rect);
+
+    this.rotate = function (rotation) {
+        this.rect.setAngle(-(rotation / Math.PI) * 180);
+    };
+
+    this.scale = function(scaling) {
+        this.rect.setScaleX(scaling);
+        this.rect.setScaleY(scaling);
+    };
+
+    this.move = function(position) {
+        this.rect.left = position[0];
+        this.rect.top = position[2];
+    };
+
+    this.render = function() {
+        this.canvas.renderAll();
+    }
+}
+
+var drawingApp = null;
 
 Leap.loop(function (frame) {
 
-    var drawingApp = ( drawingApp || new DrawingApp());
-
+    if (!drawingApp) {
+        drawingApp = new DrawingApp();
+    }
 
     frame.hands.forEach(function (hand, index) {
 
+
         if (brushSizeGestureRecognized(hand)) {
-            curScaling = convertRange(hand.indexFinger.tipPosition[1],[0,700],[0.1,3]);
+            drawingApp.scale(convertRange(hand.indexFinger.tipPosition[1],[0,700],[0.1,5]));
             setDisplay('brushSize',true)
         } else {
             setDisplay('brushSize',false)
@@ -21,54 +58,13 @@ Leap.loop(function (frame) {
             setDisplay('toolbox',false)
         }
 
-        drawingApp.transformRectangle(hand.screenPosition(), hand.roll(), curScaling);
+        drawingApp.move(hand.screenPosition());
+        drawingApp.rotate(hand.roll());
+        drawingApp.render();
+
     });
 
 }).use('screenPosition', {scale: 0.25});
-
-
-function setDisplay(elementId,isActive) {
-    if (isActive) {
-        document.getElementById(elementId).style.backgroundColor = "#00FF00";
-    } else {
-        document.getElementById(elementId).style.backgroundColor = "#FFFFFF";
-    }
-
-}
-function convertRange(value, fromRange, toRange) {
-    return ( value - fromRange[0] ) * ( toRange[1] - toRange[0] ) / ( fromRange[1] - fromRange[0] ) + toRange[0];
-}
-
-var DrawingApp = function () {
-
-    var drawingApp = this;
-
-    var canvas = this.__canvas = new fabric.Canvas('c');
-
-    var rect = new fabric.Rect({
-        left: 150,
-        top: 200,
-        originX: 'left',
-        originY: 'top',
-        width: 150,
-        height: 120,
-        angle: -10,
-        fill: 'rgba(255,0,0,0.5)',
-        transparentCorners: false
-    });
-
-    canvas.add(rect).setActiveObject(rect);
-
-    drawingApp.transformRectangle = function (position, rotation, scaling) {
-        rect.left = position[0];
-        rect.top = position[2];
-        rect.angle = rotation;
-        rect.scale(scaling);
-        canvas.renderAll();
-    }
-
-
-};
 
 function brushSizeGestureRecognized(hand) {
 
@@ -97,4 +93,16 @@ function openDrawingToolsGestureRecognized(hand) {
         }
     }
     return true;
+}
+
+function setDisplay(elementId,isActive) {
+    if (isActive) {
+        document.getElementById(elementId).style.backgroundColor = "#00FF00";
+    } else {
+        document.getElementById(elementId).style.backgroundColor = "#FFFFFF";
+    }
+
+}
+function convertRange(value, fromRange, toRange) {
+    return ( value - fromRange[0] ) * ( toRange[1] - toRange[0] ) / ( fromRange[1] - fromRange[0] ) + toRange[0];
 }
