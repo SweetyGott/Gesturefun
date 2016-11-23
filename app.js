@@ -4,32 +4,35 @@ function DrawingApp() {
 
     this.canvas.setWidth($('#canvas-container').get(0).offsetWidth - 50);
     this.canvas.setHeight(900);
+    var canvasCenter = new fabric.Point(this.canvas.width/2, this.canvas.height/2); // center of canvas
 
-    this.rect = new fabric.Rect({
-        left: 150,
-        top: 200,
-        originX: 'center',
-        originY: 'center',
-        width: 150,
-        height: 120,
-        fill: 'rgba(255,0,0,0.5)',
-        transparentCorners: false
-    });
+    this.canvas.isDrawingMode = true;
 
-    this.canvas.add(this.rect);
+    this.setRotation = function(rads) {
 
-    this.rotate = function (rotation) {
-        this.rect.setAngle(-(rotation / Math.PI) * 180);
+        var angle = -(rads / Math.PI) * 180;
+        this.canvas.getObjects().forEach(function (obj) {
+            var objectOrigin = new fabric.Point(obj.left, obj.top);
+            var new_loc = fabric.util.rotatePoint(objectOrigin, canvasCenter, rads);
+            obj.top = new_loc.y;
+            obj.left = new_loc.x;
+            obj.setAngle(angle); //setRotation each object buy the same rads
+        });
+
+
     };
 
-    this.scale = function(scaling) {
-        this.rect.setScaleX(scaling);
-        this.rect.setScaleY(scaling);
+
+    this.changeBrushSize = function(scaling) {
+        this.canvas.freeDrawingBrush.width = scaling;
     };
 
-    this.move = function(position) {
-        this.rect.left = position[0];
-        this.rect.top = position[2];
+    this.pan = function(position) {
+       this.canvas.absolutePan(new fabric.Point(-position[0],-position[2]))
+    };
+
+    this.zoom = function(zoomValue) {
+        this.canvas.setZoom(zoomValue);
     };
 
     this.render = function() {
@@ -49,27 +52,37 @@ Leap.loop(function (frame) {
 
 
 
-        if (brushSizeGestureRecognized(hand) && touchState.penButton) {
-            drawingApp.scale(convertRange(hand.indexFinger.tipPosition[1],[0,700],[0.1,5]));
+        if (zoomGesture(hand)) {
+            var convertedSize = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+            if (touchState.penButton) {
+                drawingApp.changeBrushSize(convertedSize);
+            }
+
+            if (touchState.fingerTouch || touchState.penHover) {
+                drawingApp.zoom(convertedSize);
+            }
         }
-        setDisplay('brushSize',brushSizeGestureRecognized(hand),touchState.penButton);
+        setDisplay('brushSize',zoomGesture(hand),touchState.penButton);
+        setDisplay('zoom',true,touchState.fingerTouch || touchState.penHover);
 
         setDisplay('toolbox',openDrawingToolsGestureRecognized(hand),true); // no p action needed TODO: implement effect
 
         if (touchState.penHover || touchState.fingerTouch) {
-            drawingApp.move(hand.screenPosition());
-            drawingApp.rotate(hand.roll());
+            drawingApp.pan(hand.screenPosition());
+            //drawingApp.setRotation(hand.roll());
         }
-        setDisplay('rotateCanvas',true,touchState.penHover || touchState.fingerTouch); //TODO: rotate around finger/pen
+        setDisplay('rotateCanvas',true,touchState.penHover || touchState.fingerTouch); //TODO: setRotation around finger/pen
         setDisplay('pan',true,touchState.penHover || touchState.fingerTouch);
+
+
 
         drawingApp.render();
 
     });
 
-}).use('screenPosition', {scale: 0.25});
+}).use('screenPosition', {changeBrushSize: 0.25});
 
-function brushSizeGestureRecognized(hand) {
+function zoomGesture(hand) {
 
     if (!(hand.fingers.length === 5)) {
         return false;
