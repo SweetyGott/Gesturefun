@@ -29,7 +29,7 @@
 
     <!-- leap motion -->
     <script src="./leap-0.6.4.min.js"></script>
-    <script src="//js.leapmotion.com/leap-plugins-0.1.12.js"></script>
+    <script src="http://js.leapmotion.com/leap-plugins-0.1.12.js"></script>
 
     <style>
         canvas {
@@ -49,10 +49,12 @@
 
 <div class="container-fluid">
     <div class="row">
+        <!-- Zeichencanvas -->
         <div class="col-md-10" id="canvas-container">
             <canvas id="c"></canvas>
         </div>
 
+        <!-- Sideborder for informationregarding the app-->
         <div class="col-md-2 pull-right">
             <table class="table table-bordered">
                 <tr>
@@ -72,7 +74,6 @@
                 </tr>
             </table>
 
-            <!-- Sideborder for informationregarding the app-->
             <table class="table table-bordered">
                 <tr>
                     <th>Gesture name</th>

@@ -6,18 +6,19 @@ var touchState = {
     fingerTouch : false
 };
 
+//Mouseklick-verhalten
 document.body.onmousedown = function() {
     touchState.penHover = false;
     touchState.penTouch = true;
     setTouchStateDisplay();
 };
-
 document.body.onmouseup = function() {
     touchState.penHover = false;
     touchState.penTouch = false;
     setTouchStateDisplay();
 };
 
+//Tastendruck-verhalten
 document.body.onkeydown = function(event) {
     if (event.which == 72) { // 'h' for hover
         touchState.penTouch = false;
