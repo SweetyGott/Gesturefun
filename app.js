@@ -25,27 +25,37 @@ function DrawingApp() {
     };
 
     //Sets the Pan to an absolute Position
-    this.pan = function(position) {
+    this.setPan = function(position) {
         this.canvas.absolutePan(new fabric.Point(-position[0],-position[2]))
     };
-
     //Moves the DrwaingPan by a vector
     this.movePan = function (moveVector) {
         this.canvas.relativePan(new fabric.Point(moveVector[0],moveVector[2]))
     };
 
-    this.zoom = function(zoomValue) {
+    //Sets the absolute Zoom
+    this.setZoom = function(zoomValue) {
         this.canvas.setZoom(zoomValue);
+    };
+    //ChangeZoom
+    this.changeZoom = function (zoomVector) {
+        console.log("oldZoom: " + this.canvas.getZoom() + " * " + zoomVector);
+        var newZoom = this.canvas.getZoom()*zoomVector;
+        this.canvas.setZoom(newZoom);
+        console.log("newZoom: " + this.canvas.getZoom());
     };
 
     this.render = function() {
         this.canvas.renderAll();
-    }
+    };
 }
 
 var drawingApp = null;
 var screenpositionHand = Leap.vec3.create();
 var screenpositionCalibrated = false;
+
+var zoomHand = null;
+var zoomCalibrated = false;
 
 //Leap Schleife zur Erkennung von Gesten
 Leap.loop(function (frame) {
@@ -80,8 +90,25 @@ Leap.loop(function (frame) {
         //Zoom effect
         setDisplay('zoom',zoomBrush,touchState.fingerTouch || touchState.penHover);
         if(zoomBrush && (touchState.fingerTouch || touchState.penHover)) {
-            var convertedSize = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
-            drawingApp.zoom(convertedSize);
+            if(!zoomCalibrated) {
+                zoomHand = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+                zoomCalibrated = true;
+            } else {
+                var newZoomHand = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+                var zoomMultiplier = newZoomHand - zoomHand;
+                if (zoomMultiplier < 0) {
+                    zoomMultiplier -= 1;
+                    zoomMultiplier = -1/zoomMultiplier;
+                } else {
+                    zoomMultiplier += 1;
+                }
+                console.log("Zoomechanger: " + zoomHand + "  " + newZoomHand + "  " + zoomMultiplier);
+                drawingApp.changeZoom(zoomMultiplier);
+                zoomHand = newZoomHand;
+            }
+
+        } else {
+            zoomCalibrated = false;
         }
 
         //MoveCanvas
@@ -93,12 +120,11 @@ Leap.loop(function (frame) {
             } else {
                 var newScreenpositionHand = hand.screenPosition();
                 var moveVector = Leap.vec3.create();
-
                 Leap.vec3.subtract(moveVector, newScreenpositionHand,screenpositionHand);
-                console.log("Start");
-                console.log(newScreenpositionHand );
-                console.log(screenpositionHand);
-                console.log(moveVector);
+                //console.log("Start");
+                //console.log(newScreenpositionHand );
+                //console.log(screenpositionHand);
+                //console.log(moveVector);
                 drawingApp.movePan(moveVector);
                 screenpositionHand = newScreenpositionHand;
             }
