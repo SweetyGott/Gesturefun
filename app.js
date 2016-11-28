@@ -8,14 +8,41 @@ function DrawingApp() {
 
     this.canvas.isDrawingMode = true;
 
+    this.canvas.centeredRotation = true;
+    this.canvas.centeredScaling = true;
+
     this.setRotation = function(rads) {
-        var angle = -(rads / Math.PI) * 180;
+        //Calculate Angle
+        var angle = (rads / Math.PI) * 180;
+        //Jens Sol
+        /*this.canvas.originX = 'center';
+        this.canvas.originY = 'center';
+        this.canvas.setAngle(angle);*/
+
+        /*var objs = [];
+        //get all the objects into an array
+        objs = this.canvas._objects.filter(function(obj){
+            return obj;
+        });
+        //group all the objects
+        var alltogetherObj = new fabric.Group(objs,{});
+        //clear previous objects
+        this.canvas._objects.forEach(function(obj){
+            obj.remove();
+        });
+
+        this.canvas.add(alltogetherObj);
+        alltogetherObj.setCoords();
+        //alltogetherObj.setAngle(angle);
+        */
         this.canvas.getObjects().forEach(function (obj) {
+            obj.originX = 'center';
+            obj.originY = 'center';
+            obj.setAngle(obj.getAngle()-angle); //setRotation each object buy the same rads
             var objectOrigin = new fabric.Point(obj.left, obj.top);
-            var new_loc = fabric.util.rotatePoint(objectOrigin, canvasCenter, rads);
+            var new_loc = fabric.util.rotatePoint(objectOrigin, canvasCenter, -rads);
             obj.top = new_loc.y;
             obj.left = new_loc.x;
-            obj.setAngle(angle); //setRotation each object buy the same rads
         });
     };
 
@@ -30,7 +57,9 @@ function DrawingApp() {
     };
     //Moves the DrwaingPan by a vector
     this.movePan = function (moveVector) {
-        this.canvas.relativePan(new fabric.Point(moveVector[0],moveVector[2]))
+        var mV = new fabric.Point(moveVector[0],moveVector[2]);
+        this.canvas.relativePan(mV);
+        canvasCenter = canvasCenter.subtract(mV);
     };
 
     //Sets the absolute Zoom
@@ -69,6 +98,7 @@ Leap.loop(function (frame) {
         var toolbox = toolboxGesture(hand);
         var zoomBrush = zoomBrushGesture(hand);
         var pan = panGesture(hand);
+        var rotation = rotationGesture(hand);
 
         //Toolbox
         setDisplay('toolbox',toolbox,true); // no p action needed, why the second is always true
@@ -85,7 +115,12 @@ Leap.loop(function (frame) {
         }
 
         //RotateCanvas
-        setDisplay('rotateCanvas',false,touchState.penHover || touchState.fingerTouch); //TODO: setRotation around finger/pen
+        setDisplay('rotateCanvas',rotation,touchState.penHover || touchState.fingerTouch); //TODO: setRotation around finger/pen
+        if(rotation && (touchState.penHover || touchState.fingerTouch)) {
+            var factor = hand.roll()/5;
+            drawingApp.setRotation(factor);
+        }
+
 
         //Zoom effect
         setDisplay('zoom',zoomBrush,touchState.fingerTouch || touchState.penHover);
@@ -129,7 +164,6 @@ Leap.loop(function (frame) {
                 screenpositionHand = newScreenpositionHand;
             }
 
-            //drawingApp.setRotation(hand.roll());
         } else {
             screenpositionCalibrated = false;
         }
@@ -144,6 +178,13 @@ Leap.loop(function (frame) {
 }).use('screenPosition', {changeBrushSize: 0.25});
 
 function panGesture(hand) {
+    if (!(hand.fingers.length === 5)) {
+        return false;
+    }
+    return true;
+}
+
+function rotationGesture(hand) {
     if (!(hand.fingers.length === 5)) {
         return false;
     }
