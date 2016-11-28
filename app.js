@@ -144,10 +144,8 @@ Leap.loop(function (frame) {
 }).use('screenPosition', {changeBrushSize: 0.25});
 
 function panGesture(hand) {
-    if (!(hand.fingers.length === 5)) {
-        return false;
-    }
-    return true;
+    return hand.fingers.length === 5;
+
 }
 
 function zoomBrushGesture(hand) {
