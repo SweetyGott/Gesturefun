@@ -35,14 +35,14 @@ function DrawingApp() {
 
     //Sets the absolute Zoom
     this.setZoom = function(zoomValue) {
-        this.canvas.setZoom(zoomValue);
+        canvas.zoomToPoint(new fabric.Point(this.canvas.width / 2, this.canvas.height / 2), this.canvas.getZoom() / zoomValue);
+
+        //this.canvas.setZoom(zoomValue);
     };
     //ChangeZoom
-    this.changeZoom = function (zoomVector) {
-        console.log("oldZoom: " + this.canvas.getZoom() + " * " + zoomVector);
-        var newZoom = this.canvas.getZoom()*zoomVector;
-        this.canvas.setZoom(newZoom);
-        console.log("newZoom: " + this.canvas.getZoom());
+    // zooms in or out with the hand position as center
+    this.changeZoom = function (zoomVector,handPosition) {
+        this.canvas.zoomToPoint(new fabric.Point(this.canvas.width / 2, this.canvas.height / 2), this.canvas.getZoom() * zoomVector);
     };
 
     this.render = function() {
@@ -102,7 +102,7 @@ Leap.loop(function (frame) {
                 } else {
                     zoomMultiplier += 1;
                 }
-                console.log("Zoomechanger: " + zoomHand + "  " + newZoomHand + "  " + zoomMultiplier);
+                //console.log("Zoomechanger: " + zoomHand + "  " + newZoomHand + "  " + zoomMultiplier);
                 drawingApp.changeZoom(zoomMultiplier);
                 zoomHand = newZoomHand;
             }
