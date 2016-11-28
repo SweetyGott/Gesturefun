@@ -9,7 +9,6 @@ function DrawingApp() {
     this.canvas.isDrawingMode = true;
 
     this.setRotation = function(rads) {
-
         var angle = -(rads / Math.PI) * 180;
         this.canvas.getObjects().forEach(function (obj) {
             var objectOrigin = new fabric.Point(obj.left, obj.top);
@@ -18,8 +17,6 @@ function DrawingApp() {
             obj.left = new_loc.x;
             obj.setAngle(angle); //setRotation each object buy the same rads
         });
-
-
     };
 
 
@@ -27,62 +24,133 @@ function DrawingApp() {
         this.canvas.freeDrawingBrush.width = scaling;
     };
 
-    this.pan = function(position) {
-       this.canvas.absolutePan(new fabric.Point(-position[0],-position[2]))
+    //Sets the Pan to an absolute Position
+    this.setPan = function(position) {
+        this.canvas.absolutePan(new fabric.Point(-position[0],-position[2]))
+    };
+    //Moves the DrwaingPan by a vector
+    this.movePan = function (moveVector) {
+        this.canvas.relativePan(new fabric.Point(moveVector[0],moveVector[2]))
     };
 
-    this.zoom = function(zoomValue) {
+    //Sets the absolute Zoom
+    this.setZoom = function(zoomValue) {
         this.canvas.setZoom(zoomValue);
+    };
+    //ChangeZoom
+    this.changeZoom = function (zoomVector) {
+        console.log("oldZoom: " + this.canvas.getZoom() + " * " + zoomVector);
+        var newZoom = this.canvas.getZoom()*zoomVector;
+        this.canvas.setZoom(newZoom);
+        console.log("newZoom: " + this.canvas.getZoom());
     };
 
     this.render = function() {
         this.canvas.renderAll();
-    }
+    };
 }
 
 var drawingApp = null;
+var screenpositionHand = Leap.vec3.create();
+var screenpositionCalibrated = false;
 
+var zoomHand = null;
+var zoomCalibrated = false;
+
+//Leap Schleife zur Erkennung von Gesten
 Leap.loop(function (frame) {
-
     if (!drawingApp) {
         drawingApp = new DrawingApp();
     }
 
+    //Iterates through each recognized hand
     frame.hands.forEach(function (hand, index) {
+        //GetGestures
+        var toolbox = toolboxGesture(hand);
+        var zoomBrush = zoomBrushGesture(hand);
+        var pan = panGesture(hand);
 
+        //Toolbox
+        setDisplay('toolbox',toolbox,true); // no p action needed, why the second is always true
+        //TODO: implement effect
+        if (toolboxGesture) {
 
+        }
 
-        if (zoomGesture(hand)) {
+        //Brushsize effect
+        setDisplay('brushSize',zoomBrush,touchState.penButton);
+        if(zoomBrush && touchState.penButton) {
             var convertedSize = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
-            if (touchState.penButton) {
-                drawingApp.changeBrushSize(convertedSize);
-            }
-
-            if (touchState.fingerTouch || touchState.penHover) {
-                drawingApp.zoom(convertedSize);
-            }
+            drawingApp.changeBrushSize(convertedSize);
         }
-        setDisplay('brushSize',zoomGesture(hand),touchState.penButton);
-        setDisplay('zoom',true,touchState.fingerTouch || touchState.penHover);
 
-        setDisplay('toolbox',openDrawingToolsGestureRecognized(hand),true); // no p action needed TODO: implement effect
+        //RotateCanvas
+        setDisplay('rotateCanvas',false,touchState.penHover || touchState.fingerTouch); //TODO: setRotation around finger/pen
 
+        //Zoom effect
+        setDisplay('zoom',zoomBrush,touchState.fingerTouch || touchState.penHover);
+        if(zoomBrush && (touchState.fingerTouch || touchState.penHover)) {
+            if(!zoomCalibrated) {
+                zoomHand = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+                zoomCalibrated = true;
+            } else {
+                var newZoomHand = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+                var zoomMultiplier = newZoomHand - zoomHand;
+                if (zoomMultiplier < 0) {
+                    zoomMultiplier -= 1;
+                    zoomMultiplier = -1/zoomMultiplier;
+                } else {
+                    zoomMultiplier += 1;
+                }
+                console.log("Zoomechanger: " + zoomHand + "  " + newZoomHand + "  " + zoomMultiplier);
+                drawingApp.changeZoom(zoomMultiplier);
+                zoomHand = newZoomHand;
+            }
+
+        } else {
+            zoomCalibrated = false;
+        }
+
+        //MoveCanvas
+        setDisplay('pan',pan,touchState.penHover || touchState.fingerTouch);
         if (touchState.penHover || touchState.fingerTouch) {
-            drawingApp.pan(hand.screenPosition());
+            if(!screenpositionCalibrated) {
+                screenpositionHand = hand.screenPosition();
+                screenpositionCalibrated = true;
+            } else {
+                var newScreenpositionHand = hand.screenPosition();
+                var moveVector = Leap.vec3.create();
+                Leap.vec3.subtract(moveVector, newScreenpositionHand,screenpositionHand);
+                //console.log("Start");
+                //console.log(newScreenpositionHand );
+                //console.log(screenpositionHand);
+                //console.log(moveVector);
+                drawingApp.movePan(moveVector);
+                screenpositionHand = newScreenpositionHand;
+            }
+
             //drawingApp.setRotation(hand.roll());
+        } else {
+            screenpositionCalibrated = false;
         }
-        setDisplay('rotateCanvas',true,touchState.penHover || touchState.fingerTouch); //TODO: setRotation around finger/pen
-        setDisplay('pan',true,touchState.penHover || touchState.fingerTouch);
 
 
 
+        //render new picture after recognizing everything
         drawingApp.render();
 
     });
 
 }).use('screenPosition', {changeBrushSize: 0.25});
 
-function zoomGesture(hand) {
+function panGesture(hand) {
+    if (!(hand.fingers.length === 5)) {
+        return false;
+    }
+    return true;
+}
+
+function zoomBrushGesture(hand) {
 
     if (!(hand.fingers.length === 5)) {
         return false;
@@ -100,9 +168,9 @@ function zoomGesture(hand) {
         pinkyDirection[1] < -0.5;
 }
 
-function openDrawingToolsGestureRecognized(hand) {
+function toolboxGesture(hand) {
     var palmPosition = hand.palmPosition;
-
+    //Thumb ignored
     for (var i = 1; i < 5; i++) {
         if (math.distance(palmPosition,hand.fingers[i].tipPosition) > 50) {
             return false;
@@ -111,9 +179,11 @@ function openDrawingToolsGestureRecognized(hand) {
     return true;
 }
 
+//Sets border of recognized gestures
 function setDisplay(elementId,npIsActive,pIsActive) {
-
+    //Gets Row for Showing
     var gestureRow = document.getElementById(elementId);
+    //Sets the cells
     var tagCell = gestureRow.getElementsByClassName("DESC")[0];
     var npCell = gestureRow.getElementsByClassName("NP")[0];
     var pCell = gestureRow.getElementsByClassName("P")[0];
