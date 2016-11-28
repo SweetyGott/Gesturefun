@@ -115,7 +115,7 @@ Leap.loop(function (frame) {
         }
 
         //RotateCanvas
-        setDisplay('rotateCanvas',rotation,touchState.penHover || touchState.fingerTouch); //TODO: setRotation around finger/pen
+        setDisplay('rotateCanvas',rotation,touchState.penHover || touchState.fingerTouch);
         if(rotation && (touchState.penHover || touchState.fingerTouch)) {
             var factor = hand.roll()/5;
             drawingApp.setRotation(factor);
@@ -123,6 +123,7 @@ Leap.loop(function (frame) {
 
 
         //Zoom effect
+        //TODO: adjust the center of the canvas
         setDisplay('zoom',zoomBrush,touchState.fingerTouch || touchState.penHover);
         if(zoomBrush && (touchState.fingerTouch || touchState.penHover)) {
             if(!zoomCalibrated) {
