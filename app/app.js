@@ -1,10 +1,5 @@
 var drawingApp = null;
 var drawingAppController = null;
-var zoomHand = null;
-var zoomCalibrated = false;
-
-var screenpositionHand = Leap.vec3.create();
-var screenpositionCalibrated = false;
 
 Leap.loop(function (frame) {
     if (!drawingApp) {
@@ -16,7 +11,7 @@ Leap.loop(function (frame) {
     }
 
     frame.hands.forEach(function (hand, index) {
-        drawingAppController.run(hand);
+        drawingAppController.update(hand);
     });
 
 }).use('screenPosition', {changeBrushSize: 0.25});
