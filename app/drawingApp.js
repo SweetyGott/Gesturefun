@@ -2,11 +2,25 @@ function DrawingApp() {
 
     this.canvas = this.__canvas = new fabric.Canvas('c');
 
+    this.statusCanvas = new fabric.Canvas('status');
+    this.statusCanvas.setWidth(100);
+    this.statusCanvas.setHeight(100);
+
     this.canvas.setWidth($('#canvas-container').get(0).offsetWidth - 50);
     this.canvas.setHeight(900);
     var canvasCenter = new fabric.Point(this.canvas.width/2, this.canvas.height/2); // center of canvas
 
     this.canvas.isDrawingMode = true;
+
+    this.penSizeIndicator = new fabric.Circle({
+        left: this.statusCanvas.width/2,
+        top: this.statusCanvas.width/2,
+        radius: this.canvas.freeDrawingBrush.width.radius,
+        selectable: false,
+        originX: 'center', originY: 'center'
+    });
+    this.statusCanvas.add(this.penSizeIndicator);
+
 
     this.setRotation = function(rads) {
         var angle = -(rads / Math.PI) * 180;
@@ -22,6 +36,8 @@ function DrawingApp() {
 
     this.changeBrushSize = function(scaling) {
         this.canvas.freeDrawingBrush.width = scaling;
+        this.penSizeIndicator.setRadius(scaling);
+        console.log(this.penSizeIndicator.radius)
     };
 
     //Sets the Pan to an absolute Position
@@ -47,5 +63,6 @@ function DrawingApp() {
 
     this.render = function() {
         this.canvas.renderAll();
+        this.statusCanvas.renderAll();
     };
 }

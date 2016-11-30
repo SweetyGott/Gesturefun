@@ -3,9 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="d0aef03e-e069-49f9-bc1b-42d1506a976d" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.js" afterPath="$PROJECT_DIR$/app/app.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/drawingApp.js" afterPath="$PROJECT_DIR$/app/drawingApp.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/drawingAppController.js" afterPath="$PROJECT_DIR$/app/drawingAppController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/leap-0.6.4.min.js" afterPath="$PROJECT_DIR$/leap-0.6.4.min.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/gestureRecognizer.js" afterPath="$PROJECT_DIR$/app/gestureRecognizer.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <ignored path="Gesturefun.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -38,8 +39,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="31" column="57" lean-forward="false" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="57" />
+            <state relative-caret-position="-412">
+              <caret line="61" column="62" lean-forward="false" selection-start-line="61" selection-start-column="62" selection-end-line="61" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -58,8 +59,8 @@
       <file leaf-file-name="gestureRecognizer.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/gestureRecognizer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="30" lean-forward="true" selection-start-line="0" selection-start-column="30" selection-end-line="0" selection-end-column="30" />
+            <state relative-caret-position="-646">
+              <caret line="23" column="14" lean-forward="false" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -68,8 +69,8 @@
       <file leaf-file-name="drawingAppController.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/drawingAppController.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1071">
-              <caret line="65" column="9" lean-forward="false" selection-start-line="65" selection-start-column="9" selection-end-line="65" selection-end-column="9" />
+            <state relative-caret-position="646">
+              <caret line="93" column="126" lean-forward="false" selection-start-line="93" selection-start-column="126" selection-end-line="93" selection-end-column="126" />
               <folding>
                 <element signature="n#!!doc;n#DrawingAppController#0" expanded="false" />
               </folding>
@@ -80,8 +81,8 @@
       <file leaf-file-name="drawingApp.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/drawingApp.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+            <state relative-caret-position="289">
+              <caret line="17" column="50" lean-forward="false" selection-start-line="17" selection-start-column="50" selection-end-line="17" selection-end-column="50" />
               <folding />
             </state>
           </provider>
@@ -101,6 +102,7 @@
       <find>pan</find>
       <find>consol.</find>
       <find>console.log</find>
+      <find>canvas-container</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -118,11 +120,11 @@
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/drawingApp.js" />
         <option value="$PROJECT_DIR$/app/touchController.js" />
-        <option value="$PROJECT_DIR$/app/drawingApp.js" />
-        <option value="$PROJECT_DIR$/app/gestureRecognizer.js" />
-        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/app/app.js" />
+        <option value="$PROJECT_DIR$/app/gestureRecognizer.js" />
         <option value="$PROJECT_DIR$/app/drawingAppController.js" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/app/drawingApp.js" />
       </list>
     </option>
   </component>
@@ -292,7 +294,7 @@
       <updated>1480252810439</updated>
       <workItem from="1480258616767" duration="8538000" />
       <workItem from="1480366161196" duration="1626000" />
-      <workItem from="1480513156856" duration="3356000" />
+      <workItem from="1480513156856" duration="7313000" />
     </task>
     <task id="LOCAL-00001" summary="simplified a minor if statement">
       <created>1480366987828</created>
@@ -322,11 +324,18 @@
       <option name="project" value="LOCAL" />
       <updated>1480515385038</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="more refactoring">
+      <created>1480516527699</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1480516527699</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="13520000" />
+    <option name="totallyTimeSpent" value="17477000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -374,7 +383,8 @@
     <MESSAGE value="zooming relative to center instead of top left corner" />
     <MESSAGE value="restructured app to be more modular" />
     <MESSAGE value="forgot a function" />
-    <option name="LAST_COMMIT_MESSAGE" value="forgot a function" />
+    <MESSAGE value="more refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="more refactoring" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -476,30 +486,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/drawingApp.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="31" column="57" lean-forward="false" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/gestureRecognizer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="30" lean-forward="true" selection-start-line="0" selection-start-column="30" selection-end-line="0" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -508,10 +494,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-412">
+          <caret line="61" column="62" lean-forward="false" selection-start-line="61" selection-start-column="62" selection-end-line="61" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/drawingApp.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="50" lean-forward="false" selection-start-line="17" selection-start-column="50" selection-end-line="17" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/gestureRecognizer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-646">
+          <caret line="23" column="14" lean-forward="false" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/drawingAppController.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="65" column="9" lean-forward="false" selection-start-line="65" selection-start-column="9" selection-end-line="65" selection-end-column="9" />
+        <state relative-caret-position="646">
+          <caret line="93" column="126" lean-forward="false" selection-start-line="93" selection-start-column="126" selection-end-line="93" selection-end-column="126" />
           <folding>
             <element signature="n#!!doc;n#DrawingAppController#0" expanded="false" />
           </folding>

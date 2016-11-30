@@ -59,7 +59,7 @@
         </div>
 
         <!-- Sideborder for informationregarding the app-->
-        <div class="col-md-2 pull-right">
+        <div class="col-md-2 pull-right" id="status-container">
             <table class="table table-bordered">
                 <tr>
                     <th><strong>Current P Actions</strong></th>
@@ -90,7 +90,12 @@
                     <td class="P"></td>
                 </tr>
                 <tr id="brushSize">
-                    <td class="DESC">Brush Size</td>
+                    <td class="DESC">Brush Size (whole hand)</td>
+                    <td class="NP"></td>
+                    <td class="P"></td>
+                </tr>
+                <tr id="brushSize-two-fingers">
+                    <td class="DESC">Brush Size (two fingers)</td>
                     <td class="NP"></td>
                     <td class="P"></td>
                 </tr>
@@ -105,11 +110,19 @@
                     <td class="P"></td>
                 </tr>
                 <tr id="zoom">
-                    <td class="DESC">Zoom</td>
+                    <td class="DESC">Zoom (whole hand)</td>
+                    <td class="NP"></td>
+                    <td class="P"></td>
+                </tr>
+                <tr id="zoom-two-fingers">
+                    <td class="DESC">Zoom (two fingers)</td>
                     <td class="NP"></td>
                     <td class="P"></td>
                 </tr>
             </table>
+
+            <canvas id="status"></canvas>
+
         </div>
     </div>
 </div>

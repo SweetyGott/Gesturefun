@@ -1,19 +1,42 @@
 function GestureRecognizer() {
 
-    this.zoomGesture = function(hand) {
-        var zoomRecognized = zoomBrushGesture(hand);
-        var pTrigger = touchState.fingerTouch || touchState.penHover;
-        setDisplay('zoom',zoomRecognized,pTrigger);
+    this.ZoomGestureEnum = Object.freeze({"TWO_FINGERS":1, "WHOLE_HAND":2, "NONE":3});
 
-        return zoomRecognized && pTrigger;
+
+    this.zoomGesture = function(hand) {
+        var zoomWholeHand = zoomBrushGesture(hand);
+        var zoomTwoFingers = twoFingerZoomGesture(hand);
+        var pTrigger = touchState.fingerTouch || touchState.penHover;
+        setDisplay('zoom',zoomWholeHand,pTrigger);
+        setDisplay('zoom-two-fingers',zoomTwoFingers,pTrigger);
+
+        if (!pTrigger) {
+            return this.ZoomGestureEnum.NONE;
+        } else if (zoomWholeHand) {
+            return this.ZoomGestureEnum.WHOLE_HAND
+        } else if (zoomTwoFingers) {
+            return this.ZoomGestureEnum.TWO_FINGERS
+        } else {
+            return this.ZoomGestureEnum.NONE;
+        }
     };
 
     this.brushGesture = function(hand) {
-        var brushSizeRecognized = zoomBrushGesture(hand);
-        var pTrigger = touchState.penButton;
-        setDisplay('brushSize',brushSizeRecognized,pTrigger);
+        var brushWholeHand = zoomBrushGesture(hand);
+        var brushTwoFingers = twoFingerZoomGesture(hand);
 
-        return brushSizeRecognized && pTrigger;
+        setDisplay('brushSize',brushWholeHand,touchState.penButton);
+        setDisplay('brushSize-two-fingers',brushTwoFingers,touchState.penTouch || touchState.penButton);
+
+        if (touchState.penButton && brushWholeHand) {
+            return this.ZoomGestureEnum.WHOLE_HAND;
+        } else if (touchState.penButton && brushTwoFingers) {
+            return this.ZoomGestureEnum.TWO_FINGERS;
+        } else if (touchState.penTouch && brushTwoFingers) {
+            return this.ZoomGestureEnum.TWO_FINGERS;
+        } else {
+            return this.ZoomGestureEnum.NONE;
+        }
     };
 
     this.toolboxGesture = function(hand) {
@@ -52,6 +75,19 @@ function GestureRecognizer() {
 
         return approxEqualLocation(thumbPosition, pinkyPosition) &&
             pinkyDirection[1] < -0.5;
+    }
+
+    function twoFingerZoomGesture(hand) {
+        var gestureRecognized = true;
+        var palmPosition = hand.palmPosition;
+        //Thumb and index finger ignored
+        for (var i = 2; i < 5; i++) {
+            if (math.distance(palmPosition,hand.fingers[i].tipPosition) > 50) {
+                gestureRecognized = false
+            }
+        }
+        return gestureRecognized;
+
     }
 
     //Sets border of recognized gestures

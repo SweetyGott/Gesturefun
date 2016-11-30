@@ -16,13 +16,18 @@ function DrawingAppController(drawingApp) {
 
         }
 
-        if(gestureRecognizer.brushGesture(hand)) {
-            onBrushGesture(hand);
+        var brushGesture = gestureRecognizer.brushGesture(hand);
+
+        if(brushGesture !== gestureRecognizer.ZoomGestureEnum.NONE) {
+            onBrushGesture(hand,brushGesture);
         }
 
-        if(gestureRecognizer.zoomGesture(hand)) {
-            onZoomGesture(hand,referenceZoomMultiplier);
-            referenceZoomMultiplier = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+
+        var zoomGesture = gestureRecognizer.zoomGesture(hand);
+
+        if(zoomGesture !== gestureRecognizer.ZoomGestureEnum.NONE) {
+            onZoomGesture(hand,referenceZoomMultiplier,zoomGesture);
+            referenceZoomMultiplier = calcZoomMultiplier(hand,zoomGesture);
         } else {
             referenceZoomMultiplier = null;
         }
@@ -38,8 +43,8 @@ function DrawingAppController(drawingApp) {
         drawingApp.render();
     };
 
-    function onBrushGesture(hand) {
-        var convertedSize = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+    function onBrushGesture(hand,zoomType) {
+        var convertedSize = calcBrushSize(hand,zoomType);
         drawingApp.changeBrushSize(convertedSize);
     }
 
@@ -51,9 +56,9 @@ function DrawingAppController(drawingApp) {
         }
     }
 
-    function onZoomGesture(hand,referenceZoomMultiplier) {
+    function onZoomGesture(hand,referenceZoomMultiplier,zoomType) {
         if (referenceZoomMultiplier !== null) {
-            var newZoomMultiplier = convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+            var newZoomMultiplier = calcZoomMultiplier(hand,zoomType);
             var zoomMultiplier = newZoomMultiplier - referenceZoomMultiplier;
             if (zoomMultiplier < 0) {
                 zoomMultiplier -= 1;
@@ -61,10 +66,35 @@ function DrawingAppController(drawingApp) {
             } else {
                 zoomMultiplier += 1;
             }
+
+            zoomMultiplier = Math.max(Math.min(zoomMultiplier,20),0.1);
+
             drawingApp.changeZoom(zoomMultiplier);
 
         }
     }
+
+
+    function calcZoomMultiplier(hand,zoomType) {
+        if (zoomType === gestureRecognizer.ZoomGestureEnum.WHOLE_HAND) {
+            return convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]);
+        }
+
+        if (zoomType === gestureRecognizer.ZoomGestureEnum.TWO_FINGERS) {
+            return convertRange(math.distance(hand.thumb.tipPosition,hand.indexFinger.tipPosition),[30,120],[1,5]);
+        }
+    }
+
+    function calcBrushSize(hand,zoomType) {
+        if (zoomType === gestureRecognizer.ZoomGestureEnum.WHOLE_HAND) {
+            return Math.max(1,convertRange(hand.indexFinger.tipPosition[1],[0,700],[1,20]));
+        }
+
+        if (zoomType === gestureRecognizer.ZoomGestureEnum.TWO_FINGERS) {
+            return Math.max(1,convertRange(math.distance(hand.thumb.tipPosition,hand.indexFinger.tipPosition),[30,120],[1,20]));
+        }
+    }
+
 
     function convertRange(value, fromRange, toRange) {
         return ( value - fromRange[0] ) * ( toRange[1] - toRange[0] ) / ( fromRange[1] - fromRange[0] ) + toRange[0];
