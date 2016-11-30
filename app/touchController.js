@@ -1,4 +1,3 @@
-
 var touchState = {
     penTouch : false,
     penHover : false,
