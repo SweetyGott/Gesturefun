@@ -12,6 +12,9 @@ function DrawingApp() {
 
     this.canvas.isDrawingMode = true;
 
+    this.canvas.centeredRotation = true;
+    this.canvas.centeredScaling = true;
+
     this.penSizeIndicator = new fabric.Circle({
         left: this.statusCanvas.width/2,
         top: this.statusCanvas.width/2,
@@ -23,14 +26,25 @@ function DrawingApp() {
 
 
     this.setRotation = function(rads) {
-        var angle = -(rads / Math.PI) * 180;
+        var angle = (rads / Math.PI) * 180;
+
         this.canvas.getObjects().forEach(function (obj) {
+            obj.originX = 'center';
+            obj.originY = 'center';
+            obj.setAngle(obj.getAngle()-angle); //setRotation each object buy the same rads
+            var objectOrigin = new fabric.Point(obj.left, obj.top);
+            var new_loc = fabric.util.rotatePoint(objectOrigin, canvasCenter, -rads);
+            obj.top = new_loc.y;
+            obj.left = new_loc.x;
+        });
+
+        /*this.canvas.getObjects().forEach(function (obj) {
             var objectOrigin = new fabric.Point(obj.left, obj.top);
             var new_loc = fabric.util.rotatePoint(objectOrigin, canvasCenter, rads);
             obj.top = new_loc.y;
             obj.left = new_loc.x;
             obj.setAngle(angle); //setRotation each object buy the same rads
-        });
+        });*/
     };
 
 

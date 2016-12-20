@@ -33,15 +33,20 @@ function DrawingAppController(drawingApp) {
         }
 
         if (gestureRecognizer.panGesture(hand)) {
-            onPanGesture(hand,referencePanPosition);
+            //onPanGesture(hand,referencePanPosition);
             referencePanPosition = hand.screenPosition();
         } else {
             referencePanPosition = null;
         }
 
+        if(gestureRecognizer.rotationGesture(hand)){
+            //onRotateGesture(hand);
+        }
+
         //render new picture after recognizing everything
         drawingApp.render();
     };
+
 
     function onBrushGesture(hand,zoomType) {
         var convertedSize = calcBrushSize(hand,zoomType);
@@ -72,6 +77,11 @@ function DrawingAppController(drawingApp) {
             drawingApp.changeZoom(zoomMultiplier);
 
         }
+    }
+
+    function onRotateGesture(hand) {
+        var factor = hand.roll()/5;
+        drawingApp.setRotation(factor);
     }
 
 

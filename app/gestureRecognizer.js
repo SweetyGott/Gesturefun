@@ -60,6 +60,13 @@ function GestureRecognizer() {
         return panRecognized && npTrigger
     };
 
+    this.rotationGesture = function(hand) {
+        var rotationRecognized = hand.fingers.length === 5;
+        var npTrigger = touchState.penHover || touchState.fingerTouch;
+        setDisplay('rotate',rotationRecognized,npTrigger);
+        return rotationRecognized && npTrigger
+    };
+
     function zoomBrushGesture(hand) {
         if (!(hand.fingers.length === 5)) {
             return false;
@@ -78,11 +85,12 @@ function GestureRecognizer() {
     }
 
     function twoFingerZoomGesture(hand) {
+
         var gestureRecognized = true;
         var palmPosition = hand.palmPosition;
         //Thumb and index finger ignored
         for (var i = 2; i < 5; i++) {
-            if (math.distance(palmPosition,hand.fingers[i].tipPosition) > 50) {
+            if (math.distance(palmPosition,hand.fingers[i].tipPosition) > 100) {
                 gestureRecognized = false
             }
         }
